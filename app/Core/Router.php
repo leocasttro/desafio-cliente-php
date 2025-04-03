@@ -2,34 +2,44 @@
 
 namespace App\Core;
 
-class Router 
-{
-    protected $routes = [];
+use App\Controllers\ClienteController;
+use App\Services\ClienteService;
+use App\Repositories\ClienteRepository;
 
-    public function create(string $method, string $path, callable|array $callback)
+class Router
+{
+    private array $routes = [];
+
+    public function create(string $method, string $path, $callback)
     {
-        $this->routes[$method][$path] = $callback;
+        $this->routes[] = ['method' => $method, 'path' => $path, 'callback' => $callback];
     }
 
-    public function init() 
+    public function init()
     {
-        header('Content-Type: application/json; charset=utf-8');
+        $method = $_SERVER['REQUEST_METHOD'];
+        $path = $_SERVER['REQUEST_URI'];
 
-        $httpMethod = $_SERVER["REQUEST_METHOD"];
-        $currentPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        foreach ($this->routes as $route) {
+            if ($route['method'] === $method && $route['path'] === $path) {
+                if (is_callable($route['callback'])) {
+                    call_user_func($route['callback']);
+                } elseif (is_array($route['callback'])) {
+                    [$class, $method] = $route['callback'];
 
-        if (isset($this->routes[$httpMethod][$currentPath])) {
-            $callback = $this->routes[$httpMethod][$currentPath];
+                    if ($class === ClienteController::class) {
+                        $repository = new ClienteRepository();
+                        $service = new ClienteService($repository);
+                        $controller = new ClienteController($service);
+                    } else {
+                        $controller = new $class();
+                    }
 
-            if (is_array($callback)) {
-                $controller = new $callback[0]();
-                $method = $callback[1];
-                return $controller->$method();
+                    $controller->$method();
+                }
+                return;
             }
-
-            return $callback();
         }
-
         http_response_code(404);
         echo json_encode(["error" => "Rota não encontrada"]);
     }

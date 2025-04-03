@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Interfaces\ClienteModelInterface;
 use App\Repositories\ClienteRepository;
-use Exception;
 
 class ClienteService
 {
@@ -19,12 +19,39 @@ class ClienteService
         return $this->clienteRepository->listar();
     }
 
-    public function cadastrar(array $dados) 
+    public function cadastrar(ClienteModelInterface $dados) 
     {
-        if (!filter_var($dados['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("E-mail inválido.");
+        if (empty($dados->getNome()) || empty($dados->getEmail()) || empty($dados->getCep())) {
+            throw new \InvalidArgumentException("Nome, email e CEP são obrigatórios.");
         }
 
-        return $this->clienteRepository->cadastrar($dados);
+        $cepData = $this->consultarCep($dados->getCep());
+        if ($cepData) {
+            $dados->setCidade($cepData['cidade']);
+            $dados->setLogradouro($cepData['logradouro']);
+            $dados->setUf($cepData['uf']);
+            $dados->setBairro($cepData['bairro'] ?? $dados->getBairro());
+        } else {
+            throw new \RuntimeException("CEP inválido ou não encontrado.");
+        }
+
+        $this->clienteRepository->cadastrar($dados);
+    }
+
+    private function consultarCep(string $cep): ?array
+    {
+        $cep = preg_replace('/[^0-9]/', '', $cep);
+        $url = "https://viacep.com.br/ws/{$cep}/json/";
+        $response = @file_get_contents($url);
+        if ($response === false) return null;
+        $data = json_decode($response, true);
+        if (isset($data['erro'])) return null;
+
+        return [
+            'cidade' => $data['localidade'] ?? '',
+            'logradouro' => $data['logradouro'] ?? '',
+            'uf' => $data['uf'] ?? '',
+            'bairro' => $data['bairro'] ?? ''
+        ];
     }
 }

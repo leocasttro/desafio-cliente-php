@@ -22,37 +22,30 @@ class ClienteRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function cadastrar(ClienteModelInterface $dados) 
+    public function cadastrar(ClienteModelInterface $cliente): bool
     {
-
-        if (!isset($data['nome'], $data['email'], $data['telefone'], $data['bairro'], $data['cep'])) {
-            http_response_code(400);
-            echo json_encode(["error" => "Todos os campos são obrigatórios."]);
-            return;
-        }
-
         try {
             $stmt = $this->conn->prepare(
-                "INSERT INTO clientes (nome, email, telefone, bairro, cep, cidade, logradouro, uf) 
-                VALUES (:nome, :email, :telefone, :bairro, :cep, :cidade, :logradouro, :uf)");
+                "INSERT INTO clientes 
+                (nome, email, telefone, bairro, cep, cidade, logradouro, uf, data_cadastro) 
+                VALUES 
+                (:nome, :email, :telefone, :bairro, :cep, :cidade, :logradouro, :uf, :data_cadastro)");
             
             $stmt->execute([
-                ':nome' => $dados['nome'],
-                ':email' => $dados['email'],
-                ':telefone' => $dados['telefone'],
-                ':bairro' => $dados['bairro'],
-                ':cep' => $dados['cep'],
-                ':cidade' => $dados['cidade'],
-                ':logradouro' => $dados['logradouro'],
-                ':uf' => $dados['uf']
+                ':nome' => $cliente->getNome(),
+                ':email' => $cliente->getEmail(),
+                ':telefone' => $cliente->getTelefone(),
+                ':bairro' => $cliente->getBairro(),
+                ':cep' => $cliente->getCep(),
+                ':cidade' => $cliente->getCidade(),
+                ':logradouro' => $cliente->getLogradouro(),
+                ':uf' => $cliente->getUf(),
+                ':data_cadastro' => $cliente->getDataCadastro()->format('Y-m-d H:i:s')
             ]);
     
-            http_response_code(201);
+            return true;
         } catch (PDOException $e) {
-            http_response_code(500);
-            echo json_encode(["error" => "Erro ao cadastrar cliente: " . $e->getMessage()]);
+            throw new \RuntimeException("Erro ao cadastrar cliente: " . $e->getMessage());
         }
-
-
     }
 }
