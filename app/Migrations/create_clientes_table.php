@@ -1,8 +1,6 @@
 <?php
-
+// app/Migrations/CreateClientesTable.php
 namespace App\Migrations;
-
-require_once __DIR__ . '/../Core/Database.php';
 
 use App\Core\Database;
 use PDOException;
