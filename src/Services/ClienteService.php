@@ -3,6 +3,7 @@
 namespace ClientesAPI\Services;
 
 use ClientesAPI\Repositories\ClienteRepository;
+use Exception;
 
 class ClienteService
 {
@@ -20,6 +21,10 @@ class ClienteService
 
     public function cadastrar(array $dados) 
     {
+        if (!filter_var($dados['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("E-mail inválido.");
+        }
+
         return $this->clienteRepository->cadastrar($dados);
     }
 }

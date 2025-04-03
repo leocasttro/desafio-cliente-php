@@ -5,7 +5,6 @@ require_once __DIR__ . '/src/Migrations/create_clientes_table.php';
 
 use ClientesAPI\Migrations\CreateClientesTable;
 
-// Verifica se recebeu um argumento para subir ou reverter a migration
 $action = $argv[1] ?? 'up';
 
 if ($action === 'up') {

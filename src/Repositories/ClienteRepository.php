@@ -4,6 +4,7 @@ namespace ClientesAPI\Repositories;
 
 use ClientesAPI\Core\Database;
 use PDO;
+use PDOException;
 
 class ClienteRepository
 {
@@ -22,10 +23,35 @@ class ClienteRepository
 
     public function cadastrar(array $dados) 
     {
-        $stmt = $this->conn->prepare("INSERT INTO clientes (nome, email) VALUES (:nome, :email)");
-        return $stmt->execute([
-            ":nome" => $dados["nome"],
-            ":email" => $dados["email"]
-        ]);
+
+        if (!isset($data['nome'], $data['email'], $data['telefone'], $data['bairro'], $data['cep'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Todos os campos são obrigatórios."]);
+            return;
+        }
+
+        try {
+            $stmt = $this->conn->prepare(
+                "INSERT INTO clientes (nome, email, telefone, bairro, cep, cidade, logradouro, uf) 
+                VALUES (:nome, :email, :telefone, :bairro, :cep, :cidade, :logradouro, :uf)");
+            
+            $stmt->execute([
+                ':nome' => $dados['nome'],
+                ':email' => $dados['email'],
+                ':telefone' => $dados['telefone'],
+                ':bairro' => $dados['bairro'],
+                ':cep' => $dados['cep'],
+                ':cidade' => $dados['cidade'],
+                ':logradouro' => $dados['logradouro'],
+                ':uf' => $dados['uf']
+            ]);
+    
+            http_response_code(201);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["error" => "Erro ao cadastrar cliente: " . $e->getMessage()]);
+        }
+
+
     }
 }
