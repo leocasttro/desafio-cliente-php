@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'SimpleApi\\' => array($baseDir . '/src'),
+    'ClientesAPI\\' => array($baseDir . '/src'),
 );

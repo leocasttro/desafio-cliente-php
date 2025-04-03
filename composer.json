@@ -1,5 +1,7 @@
 {
     "autoload": {
-        "psr-4": {"SimpleApi\\": "src/"}
+        "psr-4": {
+            "ClientesAPI\\": "src/"
+        }
     }
 }
