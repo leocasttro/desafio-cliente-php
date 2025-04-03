@@ -1,8 +1,8 @@
 <?php
 
-namespace ClientesAPI\Controllers;
+namespace App\Controllers;
 
-use ClientesAPI\Services\ClienteService;
+use App\Services\ClienteService;
 
 class ClienteController
 {

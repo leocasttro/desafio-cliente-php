@@ -1,6 +1,6 @@
 <?php
 
-use ClientesAPI\Application;
+use App\Application;
 
 $app = new Application();
 $app->start();

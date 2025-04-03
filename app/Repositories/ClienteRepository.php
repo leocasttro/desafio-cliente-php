@@ -1,8 +1,9 @@
 <?php
 
-namespace ClientesAPI\Repositories;
+namespace App\Repositories;
 
-use ClientesAPI\Core\Database;
+use App\Core\Database;
+use App\Interfaces\ClienteModelInterface;
 use PDO;
 use PDOException;
 
@@ -21,7 +22,7 @@ class ClienteRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function cadastrar(array $dados) 
+    public function cadastrar(ClienteModelInterface $dados) 
     {
 
         if (!isset($data['nome'], $data['email'], $data['telefone'], $data['bairro'], $data['cep'])) {

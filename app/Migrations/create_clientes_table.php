@@ -1,10 +1,10 @@
 <?php
 
-namespace ClientesAPI\Migrations;
+namespace App\Migrations;
 
 require_once __DIR__ . '/../Core/Database.php';
 
-use ClientesAPI\Core\Database;
+use App\Core\Database;
 use PDOException;
 
 class CreateClientesTable

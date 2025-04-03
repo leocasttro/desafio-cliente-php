@@ -1,8 +1,8 @@
 <?php
 
-namespace ClientesAPI\Services;
+namespace App\Services;
 
-use ClientesAPI\Repositories\ClienteRepository;
+use App\Repositories\ClienteRepository;
 use Exception;
 
 class ClienteService

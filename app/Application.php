@@ -1,9 +1,9 @@
 <?php
 
-namespace ClientesAPI;
+namespace App;
 
-use ClientesAPI\Core\Router;
-use ClientesAPI\Controllers\ClienteController;
+use App\Core\Router;
+use App\Controllers\ClienteController;
 
 class Application
 {
